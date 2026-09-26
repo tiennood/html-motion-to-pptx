@@ -94,13 +94,19 @@ Instead of primitive flat geometric circles, this skill introduces a **Photoreal
 
 ---
 
-## ⚡ Maximum Single-Slide Capabilities (Tối đa của 1 slide)
+## ⚡ Maximum Single-Slide Capabilities (Triết Lý Tối Đa Hóa 1 Slide)
 
-A single PowerPoint slide is not limited to static bullets; it can be programmed as a complete interactive simulation:
-1. **100+ Concurrent Motion Timelines**: Simultaneous planetary orbits, rotating moons, drifting spacecraft, and pulsing stars with zero lag.
-2. **Trigger State Machines (`Animation.TriggerShape`)**: Shapes can act as interactive buttons without changing slides. Clicking celestial body A opens an inspection modal, starts an audio track, and highlights telemetry data.
-3. **Native 3D Models (`.glb` / `.gltf`)**: Full 3-axis rotation, turntable animation, and 3D lighting.
-4. **Single-Click Advance Overlay**: A full-screen invisible rectangle with `ppActionNextSlide (1)` ensures mouse clicks advance slides instantly despite perpetual looping animations.
+A single PowerPoint slide is **never** limited to passive bullet points; it can be engineered as a complete, autonomous, interactive Web 3D application:
+1. **The "Single-Slide As An App" Paradigm**:
+   - Instead of fragmenting a user journey across multiple boring slides, pack the entire interactive experience into **1 single master cockpit slide**.
+2. **4-Layer Interactive Architecture**:
+   - **Layer 1 (Perpetual Motion)**: 100+ concurrent continuous Keplerian orbits, asteroid particles, pulsating stars running smoothly at 60 FPS (`RepeatCount = 9999`, `Accelerate = 0`, `Decelerate = 0`, `Z` closepath).
+   - **Layer 2 (8K Photorealistic Canvas)**: High-resolution celestial bodies isolated on `#000000` deep cosmic black with spherical bevel depth.
+   - **Layer 3 (Interactive HUD Trigger Toolbar)**: Real buttons or celestial bodies mapped to `TimeLine.InteractiveSequences` (`msoAnimTriggerOnShapeClick`).
+   - **Layer 4 (Bi-Directional State Machine Drawers)**:
+     - Click HUD button ➔ Detailed telemetry card slides in from right (`msoAnimEffectFly`).
+     - Click `✖ ĐÓNG` ➔ Card slides out to right (`Exit = -1`), returning to the pure cosmic view without changing slides.
+     - 100% opaque deep-space navy cards (`Transparency = 0.0`) with glowing neon borders prevent stacked text bleed-through.
 
 ---
 
@@ -111,7 +117,8 @@ web3d-motion-to-pptx/
 ├── SKILL.md                          # Comprehensive Agent Skill specification
 ├── README.md                         # Architecture, mathematics, and documentation
 ├── scripts/
-│   ├── build_pure_web3d_deck.ps1     # Production script: 6-slide photorealistic 3D deck
+│   ├── build_max_single_slide.ps1    # Flagship: 1-Slide interactive cockpit app with triggers & drawers
+│   ├── build_pure_web3d_deck.ps1     # Production script: 6-slide cinematic photorealistic deck
 │   ├── build_motion_pptx.ps1         # Spec-driven vector motion generator
 │   └── bezier_math.py                # Python Bezier ellipse & kinematics solver
 ├── assets/
@@ -136,7 +143,12 @@ Invoke the skill directly in your prompt:
 > *"Sử dụng skill `web3d-motion-to-pptx`, hãy phân tích web 3D trong `solar_3d/` và tạo bản trình chiếu PowerPoint vector 3D tương ứng."*
 
 ### 2. Run Direct via PowerShell COM
-To build the complete 6-slide photorealistic 3D presentation deck:
+To build the **Flagship 1-Slide Maximum Interactive Cockpit** (Perpetual 60 FPS orbits + trigger buttons + bi-directional inspection drawers):
+```powershell
+powershell -ExecutionPolicy Bypass -File "./scripts/build_max_single_slide.ps1" -pptxPath "./solar_system_max_single_slide.pptx"
+```
+
+To build the **6-Slide Cinematic Storytelling Deck**:
 ```powershell
 powershell -ExecutionPolicy Bypass -File "./scripts/build_pure_web3d_deck.ps1" -pptxPath "./solar_system_3d_vector.pptx"
 ```

@@ -26,6 +26,41 @@ Traditional approaches to transferring web animations into slide decks rely on s
 
 ---
 
+## 🚨 MANDATORY PRINCIPLE: LUÔN TỐI ĐA HÓA CHO 1 SLIDE (ALWAYS MAXIMIZE A SINGLE SLIDE)
+
+> **CHỈ THỊ BẮT BUỘC**: Tuyệt đối **không** chia nhỏ nội dung thành nhiều slide tĩnh, thụ động nếu một slide đơn có thể đảm nhiệm toàn bộ trải nghiệm tương tác! Hãy luôn đẩy 1 slide lên giới hạn năng lực tối đa của nó.
+
+### Bản Chất: 1 Slide = 1 Ứng Dụng Tương Tác Độc Lập Hoàn Chỉnh (Cockpit Application)
+Thay vì chuyển trang liên tục, hãy cấu trúc slide theo kiến trúc 4 lớp tương tác đồng thời (**4-Layer Interactive Architecture**):
+
+1. **Lớp 1: Động cơ chuyển động liên tục 60 FPS (Perpetual Background Engine)**:
+   - Toàn bộ các quỹ đạo thiên thể Keplerian Bézier, vành đai tiểu hành tinh, hiệu ứng hạt, lõi sao dao động chạy liên tục ở chế độ `RepeatCount = 9999`, `Accelerate = 0`, `Decelerate = 0`, kết thúc bằng `Z`.
+2. **Lớp 2: Tài nguyên 3D quang học siêu thực (Photorealistic 3D Spatial Canvas)**:
+   - Các asset 3D 8K (Mặt Trời, Trái Đất, Mặt Trăng, Sao Hỏa, Sao Mộc, Sao Thổ, Voyager 1) hòa trộn vô hình trên nền đen `#000000`, tạo độ sâu trường ảnh vũ trụ vô tận.
+3. **Lớp 3: Bảng điều khiển tương tác (Interactive Cockpit Toolbar & Hotspot Triggers)**:
+   - Các nút bấm HUD hoặc chính các thiên thể đang bay trên quỹ đạo được gán làm vật thể kích hoạt (Trigger Shapes) thông qua `InteractiveSequences`.
+4. **Lớp 4: Máy trạng thái đóng/mở Drawer hai chiều (Bi-Directional Drawer State Machine)**:
+   - **Kích hoạt Mở**: Khi nhấp vào nút HUD hoặc thiên thể ➔ Bảng thông số chi tiết (Drawer Card) trượt mượt mà từ cạnh phải vào màn hình:
+     ```powershell
+     $seqOpen = $slide.TimeLine.InteractiveSequences.Add(-1)
+     $effOpen = $seqOpen.AddEffect($drawerGroup, 2, 0, 4) # 2 = Fly, 4 = OnShapeClick
+     $effOpen.Timing.TriggerShape = $triggerButton
+     $effOpen.EffectParameters.Direction = 3 # From Right
+     ```
+   - **Kích hoạt Đóng**: Trên mỗi Drawer có nút `✖ ĐÓNG` với hiệu ứng thoát:
+     ```powershell
+     $seqClose = $slide.TimeLine.InteractiveSequences.Add(-1)
+     $effClose = $seqClose.AddEffect($drawerGroup, 2, 0, 4)
+     $effClose.Timing.TriggerShape = $closeButton
+     $effClose.Exit = -1 # msoTrue (Exit Effect)
+     $effClose.EffectParameters.Direction = 4 # To Right
+     ```
+   - **Chống đè chữ**: Thẻ Drawer sử dụng nền xanh đen sâu thẳm đậm đặc (`Transparency = 0.0`) với viền neon phát sáng để tránh hoàn toàn hiện tượng chồng chữ khi có nhiều drawer.
+
+Tham khảo kịch bản mẫu đầy đủ tại: `scripts/build_max_single_slide.ps1`.
+
+---
+
 ## 🏗️ Architecture Overview
 
 ```
