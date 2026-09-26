@@ -113,20 +113,21 @@ $pSh = $slide.Shapes.AddShape(9, $initX - 6, $initY - 6, 12, 12)
 $pSh.Fill.Solid(); $pSh.Fill.ForeColor.RGB = 0xF8BD38; $pSh.Line.Visible = 0
 
 # Assign 4-Bezier Closed Orbit (86 = msoAnimEffectPathCircle, 2 = WithPrevious)
+# CRITICAL: Always end with 'Z' (closed loop), and set Accelerate=0, Decelerate=0 for pure constant velocity!
 $eff = $slide.TimeLine.MainSequence.AddEffect($pSh, 86, 0, 2)
 $eff.Timing.Duration = $duration
-$eff.Timing.RepeatCount = 1000
+$eff.Timing.RepeatCount = 9999
+$eff.Timing.RepeatDuration = 99999
 $eff.Timing.SmoothStart = 0; $eff.Timing.SmoothEnd = 0
-$eff.Behaviors.Item(1).MotionEffect.Path = $bezierPath # Must end with " E"
+$eff.Timing.Accelerate = 0.0; $eff.Timing.Decelerate = 0.0
+$eff.Timing.BounceEnd = 0; $eff.Timing.RewindAtEnd = 0
+$eff.Behaviors.Item(1).MotionEffect.Path = $bezierPath # Must end with " Z"
 
-# Assign Depth Scaling (54 = msoAnimEffectGrowShrink)
-$effScale = $slide.TimeLine.MainSequence.AddEffect($pSh, 54, 0, 2)
-$effScale.Timing.Duration = $duration / 2.0
-$effScale.Timing.RepeatCount = 1000
-$effScale.Timing.AutoReverse = -1
-$sBeh = $effScale.Behaviors.Add(3) # 3 = msoAnimTypeScale
-$sBeh.ScaleEffect.ByX = 125
-$sBeh.ScaleEffect.ByY = 125
+# Single-Click Slide Advance Overlay:
+# A transparent rectangle on the top layer with ppActionNextSlide (1) ensures 1-click advance without stopping animations:
+$overlay = $slide.Shapes.AddShape(1, 0, 0, 960, 540)
+$overlay.Fill.Solid(); $overlay.Fill.Transparency = 1.0; $overlay.Line.Visible = 0
+$overlay.ActionSettings.Item(1).Action = 1 # ppActionNextSlide
 
 $pres.SaveAs("presentation.pptx")
 ```
