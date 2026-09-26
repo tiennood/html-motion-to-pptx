@@ -1,98 +1,159 @@
 ---
-name: html-motion-to-pptx
-description: Converts HTML web animations (CSS keyframes, Canvas, WebGL, JS requestAnimationFrame, SVG) into native PowerPoint 2D vector shapes with pseudo-3D orbital motion paths, depth scaling, and multi-layer Z-ordering.
+name: web3d-motion-to-pptx
+description: Converts Web 3D interactive applications (Three.js, WebGL, Canvas), CSS styles (glassmorphism, neon glow, gradients, soft edges), and JavaScript physics/kinematics into 100% native vector PowerPoint shapes and smooth perpetual timeline animations.
 ---
 
-# HTML Motion to Native Vector 3D PPTX Skill
+# Web3D Motion & CSS to PowerPoint (web3d-motion-to-pptx)
 
-## Overview
-This skill provides instructions, architectural principles, mathematical projection algorithms, and automated scripts to convert dynamic HTML/CSS/JavaScript web animations into native Microsoft PowerPoint (`.pptx`) presentations. 
-
-Unlike traditional methods that capture static screenshots, pre-render bloated MP4 videos, or insert jerky animated GIFs, this skill creates **100% pure 2D vector geometry** inside PowerPoint that moves along **mathematical 3D perspective trajectories** with depth scaling (`ScaleEffect`) and multi-layer Z-ordering.
+Transform interactive Web 3D applications, CSS visual effects, and JavaScript mathematical physics into 100% native vector PowerPoint (.pptx) presentations. Zero video files, zero animated GIFs — pure vector geometry and native animation timeline behaviors.
 
 ---
 
-## Key Principles & Constraints
-1. **Zero Embedded Video / GIF**:
-   - Never embed MP4, WebM, or GIF files. Slides must contain only native vector shapes (`msoShapeOval`, `msoShapeRectangle`, Bezier curves, textboxes).
-   - Results in lightweight presentations (~60 KB vs 50 MB+), crisp 4K/8K resolution, and zero XML corruption.
-2. **Hardware-Accelerated 60 FPS**:
-   - PowerPoint renders native vector animations with hardware GPU acceleration.
-   - Perpetual closed loops are achieved via `RepeatCount = 1000` (or `msoAnimRepeatInfinite`).
-3. **Perspective Projection (Pseudo-3D Illusion)**:
-   - 3D space $(x, y, z)$ is mapped to 2D screen coordinates $(X, Y)$ and scale factor $S(z)$.
-   - Objects closer to the camera ($+z$) scale up ($>100\%$) and move in front.
-   - Objects further away ($-z$) scale down ($<100\%$) and move behind.
-4. **Layout Separation (HUD Dashboard Architecture)**:
-   - Left Half ($X: 40 - 400\text{ pt}$): High-contrast semi-transparent text cards and statistics.
-   - Right Half ($X: 420 - 940\text{ pt}$): Celestial stage / motion viewport.
-   - Maintain a $25-30\text{ pt}$ safe margin so moving objects never collide with or obscure text.
-5. **Seamless Single-Click Navigation (Zero Snap-back)**:
-   - When slides have looping animations, PowerPoint natively treats a normal mouse click as "stop animation" (causing shapes to jump back to origin), requiring a second click to change slides.
-   - Solution: Place a 100% transparent overlay (`Fill.Transparency = 1.0`) with `ActionSettings(1).Action = 1` (`ppActionNextSlide`). This allows instant 1-click slide advance without interrupting or snapping the active orbital animations.
-
----
-
-## Mathematical Formulation
-
-### 1. 4-Arc Cubic Bezier Ellipse
-PowerPoint motion paths are normalized coordinate strings: `M 0 0 C c1x c1y c2x c2y endX endY ... Z`.
-To create a closed elliptical orbit with semi-major axis $a$, semi-minor axis $b$, and center $(cx, cy)$, divided into 4 quadrants ($q = 0, 1, 2, 3$) starting at angle $\theta_0$:
-
-The standard Bezier magic constant for circular/elliptical arcs is:
-$$\kappa = \frac{4}{3}(\sqrt{2} - 1) \approx 0.5522847498$$
-
-For each quadrant $q \in \{0, 1, 2, 3\}$ from angle $\theta_A = \theta_0 + q \cdot \frac{\pi}{2}$ to $\theta_B = \theta_0 + (q+1) \cdot \frac{\pi}{2}$:
-$$C_1 = \left(cx + a\cos\theta_A - \kappa a\sin\theta_A,\; cy + b\sin\theta_A + \kappa b\cos\theta_A\right)$$
-$$C_2 = \left(cx + a\cos\theta_B + \kappa a\sin\theta_B,\; cy + b\sin\theta_B - \kappa b\cos\theta_B\right)$$
-$$\text{End} = \left(cx + a\cos\theta_B,\; cy + b\sin\theta_B\right)$$
-
-Normalize each coordinate relative to the initial starting point $(X_{\text{init}}, Y_{\text{init}})$ and slide dimensions ($W = 960, H = 540$):
-$$\Delta x = \frac{x - X_{\text{init}}}{960.0}, \quad \Delta y = \frac{y - Y_{\text{init}}}{540.0}$$
-
-### 2. Depth Scaling via AutoReverse
-In PowerPoint COM / OpenXML:
-- Add a `ScaleEffect` behavior to the animation sequence with `AutoReverse = -1` (True).
-- Set `ScaleEffect.ByX = 125` and `ScaleEffect.ByY = 125` (125%).
-- When synchronized with the orbit duration, the shape naturally expands to 125% when orbiting forward and shrinks to 80% when swinging around the back.
-
----
-
-## 4-Step Conversion Workflow
+## Core Engine Architecture
 
 ```
-[ Step 1: DOM & Entity Extraction ]
-  Analyze HTML structure: titles, badges, metrics, colors (hex).
-  Extract moving entities: radii, periods, colors, groupings.
-                   │
-                   ▼
-[ Step 2: Kinematic Parameterization ]
-  Map Web coordinate loops / CSS keyframes to orbital parameters:
-  - Center (cx, cy)
-  - Semi-major axis a, Semi-minor axis b
-  - Orbital period T (seconds)
-  - Starting phase angle theta0
-                   │
-                   ▼
-[ Step 3: Vector Synthesis & Animation Pipeline ]
-  Generate native PowerPoint COM script or OpenXML markup:
-  - Slide.Background.Fill (Hex dark space #030712)
-  - Orbit ellipses: msoShapeOval (Fill.Visible = 0, Line.Visible = -1)
-  - Celestial bodies & satellites: grouped vector shapes
-  - Closed 4-Bezier motion path: MotionEffect.Path
-  - Depth pulse: ScaleEffect
-                   │
-                   ▼
-[ Step 4: Verification & Export ]
-  Export high-resolution slide PNGs.
-  Audit bounding boxes and ensure zero overlap between HUD and motion stage.
+┌────────────────────────────────────────────────────────┐
+│             Web Source (HTML / CSS / JS)               │
+└──────────────────────────┬─────────────────────────────┘
+                           │
+             ┌─────────────┴─────────────┐
+             ▼                           ▼
+┌───────────────────────────┐ ┌──────────────────────────┐
+│   CSS Aesthetics Engine   │ │  JS Kinematics Engine    │
+│  - Neon Glow (box-shadow) │ │  - Keplerian Orbits      │
+│  - SoftEdge Atmospheric   │ │  - 4-Bezier Closed Loops │
+│  - Glassmorphic Cards     │ │  - Constant Linear Speed │
+│  - Multi-stop Gradients   │ │  - Procedural Particles  │
+│  - Cyberpunk Typography   │ │  - Single-Click Advance  │
+└─────────────┬─────────────┘ └──────────┬───────────────┘
+              │                          │
+              └─────────────┬────────────┘
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│            PowerPoint Native Vector Output             │
+│        (Shape Properties + Motion Effect 86)           │
+└────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Automation Script Template (PowerShell COM)
+## 1. CSS Aesthetics to PowerPoint Vector Mapping
+
+Modern web visual design relies on lighting, blur, shadows, and glassmorphism. PowerPoint COM and OpenXML support direct equivalents:
+
+### A. Neon Glow & Light Emission (`box-shadow` / `filter: drop-shadow`)
+In Web CSS:
+```css
+box-shadow: 0 0 25px #38bdf8, 0 0 50px rgba(56, 189, 248, 0.4);
+```
+In PowerPoint COM:
+```powershell
+$shape.Glow.Color.RGB = 0x24BFFB  # Neon Cyan (BGR)
+$shape.Glow.Radius = 18           # Glow radius in points
+$shape.Glow.Transparency = 0.35   # Semi-transparent aura
+```
+
+### B. Atmospheric Haze & Nebulae (`filter: blur()`)
+In Web CSS:
+```css
+filter: blur(8px); opacity: 0.5;
+```
+In PowerPoint COM:
+```powershell
+$shape.SoftEdge.Type = 2          # 1=1pt, 2=2.5pt, 3=5pt, 4=10pt, 5=25pt, 6=50pt
+$shape.Fill.Transparency = 0.50
+```
+
+### C. Glassmorphism HUD Panels (`backdrop-filter: blur()` & `rgba()`)
+In Web CSS:
+```css
+background: rgba(15, 23, 42, 0.75);
+backdrop-filter: blur(16px);
+border: 1px solid rgba(56, 189, 248, 0.3);
+```
+In PowerPoint COM:
+```powershell
+$card.Fill.Solid()
+$card.Fill.ForeColor.RGB = 0x1E120A       # Deep space navy-slate (#0A121E BGR)
+$card.Fill.Transparency = 0.20           # 80% opacity glass effect
+$card.Line.Visible = -1
+$card.Line.ForeColor.RGB = 0x47301F       # Subtle frosted border
+$card.Line.Weight = 0.8
+$card.Shadow.Visible = -1                # Ambient drop shadow
+$card.Shadow.Blur = 12
+$card.Shadow.Transparency = 0.60
+$card.Shadow.OffsetX = 0; $card.Shadow.OffsetY = 4
+```
+
+### D. Multi-Stop Radial & Linear Gradients
+```powershell
+# Radial solar sphere / core gradient:
+$sun.Fill.TwoColorGradient(1, 1)         # 1 = msoGradientHorizontal
+$sun.Fill.ForeColor.RGB = 0x0B9EF5       # Bright Gold/Orange (#F59E0B)
+$sun.Fill.BackColor.RGB = 0x24BFFB       # Corona Yellow (#FBBF24)
+```
+
+---
+
+## 2. JavaScript Kinematics & Physics Engine
+
+### A. Keplerian Orbit Parametrization (4-Cubic Bezier Closed Circuit)
+To map any elliptical orbit with semi-major axis $a$, semi-minor axis $b$, center $(c_x, c_y)$, and initial angle $\theta_0$:
+
+Optimal cubic Bezier control constant:
+$$\kappa = \frac{4}{3}(\sqrt{2} - 1) \approx 0.55228475$$
+
+For each of the 4 quadrants ($q = 0, 1, 2, 3$):
+$$\theta_A = \theta_0 + \frac{q\pi}{2}, \quad \theta_B = \theta_0 + \frac{(q+1)\pi}{2}$$
+
+Control points relative to shape's initial position $(X_{\text{init}}, Y_{\text{init}})$ and slide dimensions ($W = 960, H = 540$):
+$$C_{1x} = \frac{c_x + a\cos\theta_A - \kappa a\sin\theta_A - X_{\text{init}}}{960.0}, \quad C_{1y} = \frac{c_y + b\sin\theta_A + \kappa b\cos\theta_A - Y_{\text{init}}}{540.0}$$
+$$C_{2x} = \frac{c_x + a\cos\theta_B + \kappa a\sin\theta_B - X_{\text{init}}}{960.0}, \quad C_{2y} = \frac{c_y + b\sin\theta_B - \kappa b\cos\theta_B - Y_{\text{init}}}{540.0}$$
+$$E_x = \frac{c_x + a\cos\theta_B - X_{\text{init}}}{960.0}, \quad E_y = \frac{c_y + b\sin\theta_B - Y_{\text{init}}}{540.0}$$
+
+VML String format:
+```
+M 0 0 C c1x c1y c2x c2y Ex Ey ... C ... 0.00000 0.00000 Z
+```
+
+### B. Golden Rules for Flawless PowerPoint Perpetual Motion
+1. **Always terminate with `Z` (Closepath):** 
+   - Never end motion path strings with `E` (open subpath). `Z` tells PowerPoint to treat the path as a mathematically closed loop with zero discontinuity.
+2. **Eliminate Default Deceleration (`Accelerate = 0.0`, `Decelerate = 0.0`):**
+   - PowerPoint defaults to `Accelerate = 0.5` and `Decelerate = 0.5`, causing objects to crawl to a dead stop at the end of each period before restarting. Setting both to `0.0` guarantees 100% constant, uniform orbital velocity.
+3. **Avoid Scale Effect Conflicts on Moving Shapes:**
+   - Do NOT attach concurrent `GrowShrink` (Effect 54) with `AutoReverse = -1` on shapes executing a `MotionPath` (Effect 86). Scaling reverses alter the shape's coordinate transformation matrix, causing visible position snaps. Reserve `GrowShrink` exclusively for static pulsing cores (e.g. the Sun).
+4. **Set Perpetual Looping:**
+   ```powershell
+   $eff.Timing.RepeatCount = 9999
+   $eff.Timing.RepeatDuration = 99999
+   $eff.Timing.SmoothStart = 0
+   $eff.Timing.SmoothEnd = 0
+   $eff.Timing.BounceEnd = 0
+   $eff.Timing.RewindAtEnd = 0
+   ```
+5. **Calibrate Harmonic Orbital Periods:**
+   - Calibrate periods so that all bodies complete multiple 360° revolutions during typical slide presentation time (e.g. 1.8s to 8.2s).
+
+### C. Single-Click Advance Architecture
+In PowerPoint, active repeating animations intercept mouse clicks. To ensure users can advance slides with a single click anywhere without pausing the animation:
+```powershell
+# Full-Screen Transparent Overlay on the TOP layer
+$overlay = $slide.Shapes.AddShape(1, 0, 0, 960, 540) # msoShapeRectangle
+$overlay.Name = "ClickAdvanceOverlay"
+$overlay.Fill.Solid()
+$overlay.Fill.Transparency = 1.0                     # 100% invisible
+$overlay.Line.Visible = 0
+$overlay.ActionSettings.Item(1).Action = 1           # 1 = ppActionNextSlide
+```
+
+---
+
+## 3. Automation Script Template (PowerShell COM)
 
 ```powershell
+param([string]$pptxPath = "output_presentation.pptx")
+
 $ppt = New-Object -ComObject PowerPoint.Application
 $ppt.Visible = 1
 $pres = $ppt.Presentations.Add()
@@ -101,40 +162,51 @@ $pres.PageSetup.SlideHeight = 540.0
 
 $slide = $pres.Slides.Add(1, 12) # Blank slide
 $slide.Background.Fill.Solid()
-$slide.Background.Fill.ForeColor.RGB = 0x120703 # #030712 BGR
+$slide.Background.Fill.ForeColor.RGB = 0x120703 # #030712 deep space
 
-# Create Orbit Guide
-$orb = $slide.Shapes.AddShape(9, $cx - $a, $cy - $b, $a * 2, $b * 2)
-$orb.Fill.Visible = 0; $orb.Line.Visible = -1
-$orb.Line.ForeColor.RGB = 0x6E4A35; $orb.Line.Weight = 1.0; $orb.Line.Transparency = 0.35
+# 1. Sun with CSS-inspired Corona Glow
+$sun = $slide.Shapes.AddShape(9, 645 - 20, 270 - 20, 40, 40)
+$sun.Fill.Solid(); $sun.Fill.ForeColor.RGB = 0x0B9EF5
+$sun.Line.Visible = 0
+$sun.Glow.Color.RGB = 0x24BFFB
+$sun.Glow.Radius = 24
+$sun.Glow.Transparency = 0.35
 
-# Create Moving Planet Vector
-$pSh = $slide.Shapes.AddShape(9, $initX - 6, $initY - 6, 12, 12)
-$pSh.Fill.Solid(); $pSh.Fill.ForeColor.RGB = 0xF8BD38; $pSh.Line.Visible = 0
+# 2. Moving Celestial Body
+$initX = 645.0 + 150.0; $initY = 270.0
+$planet = $slide.Shapes.AddShape(9, $initX - 8, $initY - 8, 16, 16)
+$planet.Fill.Solid(); $planet.Fill.ForeColor.RGB = 0xF8BD38
+$planet.Line.Visible = 0
 
-# Assign 4-Bezier Closed Orbit (86 = msoAnimEffectPathCircle, 2 = WithPrevious)
-# CRITICAL: Always end with 'Z' (closed loop), and set Accelerate=0, Decelerate=0 for pure constant velocity!
-$eff = $slide.TimeLine.MainSequence.AddEffect($pSh, 86, 0, 2)
-$eff.Timing.Duration = $duration
+# 3. Closed Bezier Motion Path (Pure Constant Velocity)
+$path = "M 0 0 C 0.00000 0.06136 -0.06992 0.11111 -0.15625 0.11111 C -0.24258 0.11111 -0.31250 0.06136 -0.31250 0.00000 C -0.31250 -0.06136 -0.24258 -0.11111 -0.15625 -0.11111 C -0.06992 -0.11111 0.00000 -0.06136 0.00000 0.00000 Z"
+
+$eff = $slide.TimeLine.MainSequence.AddEffect($planet, 86, 0, 2) # PathCircle, WithPrevious
+$eff.Timing.Duration = 3.6
 $eff.Timing.RepeatCount = 9999
 $eff.Timing.RepeatDuration = 99999
 $eff.Timing.SmoothStart = 0; $eff.Timing.SmoothEnd = 0
 $eff.Timing.Accelerate = 0.0; $eff.Timing.Decelerate = 0.0
 $eff.Timing.BounceEnd = 0; $eff.Timing.RewindAtEnd = 0
-$eff.Behaviors.Item(1).MotionEffect.Path = $bezierPath # Must end with " Z"
+$eff.Behaviors.Item(1).MotionEffect.Path = $path
 
-# Single-Click Slide Advance Overlay:
-# A transparent rectangle on the top layer with ppActionNextSlide (1) ensures 1-click advance without stopping animations:
+# 4. Single-Click Advance Overlay
 $overlay = $slide.Shapes.AddShape(1, 0, 0, 960, 540)
 $overlay.Fill.Solid(); $overlay.Fill.Transparency = 1.0; $overlay.Line.Visible = 0
-$overlay.ActionSettings.Item(1).Action = 1 # ppActionNextSlide
+$overlay.ActionSettings.Item(1).Action = 1
 
-$pres.SaveAs("presentation.pptx")
+$pres.SaveAs($pptxPath)
+$pres.Close()
+$ppt.Quit()
 ```
 
 ---
 
-## When to Activate This Skill
-- The user provides an interactive HTML page with animations (CSS, Canvas, WebGL, JS) and wants it turned into PowerPoint.
-- The user requests 3D-like rotating/revolving objects in PowerPoint without using video files or GIFs.
-- Building presentation decks that require perpetual orbital motion, interactive telemetry dashboards, or sci-fi UI aesthetics.
+## 4. Verification Checklist
+
+- [ ] Motion path strings terminate with `Z`, not `E`.
+- [ ] `Timing.Accelerate = 0.0` and `Timing.Decelerate = 0.0` set on all looping motions.
+- [ ] No concurrent `GrowShrink` (Effect 54) on moving shapes executing a `MotionPath` (Effect 86).
+- [ ] Full-screen transparent overlay with `Action = ppActionNextSlide (1)` present on top layer.
+- [ ] Key visual elements leverage `Shape.Glow`, `Shape.SoftEdge`, and `Shape.Shadow` for modern aesthetics.
+- [ ] Presentation tested via Slide Show (`F5`): continuous uninterrupted motion and 1-click slide transition verified.
