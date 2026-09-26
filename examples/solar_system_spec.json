@@ -1,0 +1,37 @@
+{
+  "title": "Solar System 3D Vector Deck",
+  "theme": {
+    "backgroundColor": "0x120703",
+    "primaryFont": "Arial",
+    "accentColor": "0xF8BD38"
+  },
+  "layout": {
+    "slideWidth": 960.0,
+    "slideHeight": 540.0,
+    "hudWidth": 360.0,
+    "hudLeft": 40.0,
+    "celestialCenter": { "x": 680.0, "y": 270.0 }
+  },
+  "slides": [
+    {
+      "step": "TRANG 01 / 06 • TOÀN CẢNH VŨ TRỤ",
+      "title": "Toàn Cảnh Thái Dương Hệ",
+      "desc": "8 hành tinh đang liên tục quay quanh Mặt Trời theo thời gian thực. Mỗi hành tinh sở hữu vận tốc và quỹ đạo riêng biệt.",
+      "cards": [
+        { "tag": "TRUNG TÂM HỆ", "name": "Mặt Trời (Sao Mẹ)", "color": "0x0B9EF5", "stat": "99.86% Khối lượng", "detail": "Cung cấp lực hấp dẫn giữ trọn toàn bộ 8 hành tinh trong quỹ đạo ổn định suốt 4.6 tỷ năm." },
+        { "tag": "QUỸ ĐẠO HÀNH TINH", "name": "8 Hành Tinh Chính", "color": "0xF8BD38", "stat": "2 Nhóm Thiên Thể", "detail": "4 hành tinh đất đá nội hệ (Thủy, Kim, Địa, Hỏa) và 4 gã khổng lồ ngoại hệ (Mộc, Thổ, Thiên, Hải Vương)." },
+        { "tag": "CƠ HỌC THIÊN THỂ", "name": "Mô Phỏng 3D", "color": "0x81B910", "stat": "Quỹ Đạo Keplerian", "detail": "Toàn bộ chuyển động quỹ đạo elip 3D được mô phỏng theo cơ học Keplerian chuẩn xác." }
+      ],
+      "orbits": [
+        { "name": "Mercury", "a": 38.0, "b": 15.0, "size": 6.5, "color": "0xB8A394", "duration": 5.0, "startAngle": 35 },
+        { "name": "Venus", "a": 62.0, "b": 24.0, "size": 9.0, "color": "0x0B9EF5", "duration": 7.5, "startAngle": 135 },
+        { "name": "Earth", "a": 88.0, "b": 34.0, "size": 10.5, "color": "0xF8BD38", "duration": 10.0, "startAngle": 225, "hasMoon": true },
+        { "name": "Mars", "a": 118.0, "b": 46.0, "size": 8.0, "color": "0x4444EF", "duration": 13.5, "startAngle": 315 },
+        { "name": "Jupiter", "a": 154.0, "b": 60.0, "size": 17.0, "color": "0x0677D9", "duration": 18.0, "startAngle": 80 },
+        { "name": "Saturn", "a": 190.0, "b": 74.0, "size": 14.0, "color": "0x24BFFB", "duration": 23.0, "startAngle": 190, "hasRing": true },
+        { "name": "Uranus", "a": 224.0, "b": 87.0, "size": 11.0, "color": "0xEED322", "duration": 28.0, "startAngle": 275 },
+        { "name": "Neptune", "a": 256.0, "b": 100.0, "size": 10.5, "color": "0xF6823B", "duration": 34.0, "startAngle": 0 }
+      ]
+    }
+  ]
+}
