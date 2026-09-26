@@ -27,6 +27,9 @@ Unlike traditional methods that capture static screenshots, pre-render bloated M
    - Left Half ($X: 40 - 400\text{ pt}$): High-contrast semi-transparent text cards and statistics.
    - Right Half ($X: 420 - 940\text{ pt}$): Celestial stage / motion viewport.
    - Maintain a $25-30\text{ pt}$ safe margin so moving objects never collide with or obscure text.
+5. **Seamless Single-Click Navigation (Zero Snap-back)**:
+   - When slides have looping animations, PowerPoint natively treats a normal mouse click as "stop animation" (causing shapes to jump back to origin), requiring a second click to change slides.
+   - Solution: Place a 100% transparent overlay (`Fill.Transparency = 1.0`) with `ActionSettings(1).Action = 1` (`ppActionNextSlide`). This allows instant 1-click slide advance without interrupting or snapping the active orbital animations.
 
 ---
 
