@@ -44,7 +44,7 @@ function Get-BezierEllipsePath($cx, $cy, $a, $b, $initX, $initY, $theta0) {
 
         $quarters += [string]::Format($ci, "C {0:F5} {1:F5} {2:F5} {3:F5} {4:F5} {5:F5}", $c1x, $c1y, $c2x, $c2y, $endX, $endY)
     }
-    return "M 0 0 " + ($quarters -join " ") + " Z"
+    return "M 0 0 " + ($quarters -join " ") + " E"
 }
 
 Write-Host "Building presentation from $specPath..."
@@ -142,16 +142,16 @@ foreach ($sData in $spec.slides) {
         $pSh = $slide.Shapes.AddShape(9, $initX - ($diam / 2), $initY - ($diam / 2), $diam, $diam)
         $pSh.Fill.Solid(); $pSh.Fill.ForeColor.RGB = $color; $pSh.Line.Visible = 0
 
-        # Animation Path
+        # Animation Path (86 = msoAnimEffectPathCircle, 2 = WithPrevious)
         $path = Get-BezierEllipsePath $cx $cy $a $b $initX $initY $th0
-        $eff = $slide.TimeLine.MainSequence.AddEffect($pSh, 1, 0, 2)
+        $eff = $slide.TimeLine.MainSequence.AddEffect($pSh, 86, 0, 2)
         $eff.Timing.Duration = $dur
         $eff.Timing.RepeatCount = 1000
         $eff.Timing.SmoothStart = 0; $eff.Timing.SmoothEnd = 0
-        $eff.Behaviors.Add(1).MotionEffect.Path = $path
+        $eff.Behaviors.Item(1).MotionEffect.Path = $path
 
-        # Depth Scaling
-        $effS = $slide.TimeLine.MainSequence.AddEffect($pSh, 1, 0, 2)
+        # Depth Scaling (54 = msoAnimEffectGrowShrink)
+        $effS = $slide.TimeLine.MainSequence.AddEffect($pSh, 54, 0, 2)
         $effS.Timing.Duration = $dur / 2.0
         $effS.Timing.RepeatCount = 1000
         $effS.Timing.AutoReverse = -1

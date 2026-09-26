@@ -109,19 +109,19 @@ $orb.Line.ForeColor.RGB = 0x6E4A35; $orb.Line.Weight = 1.0; $orb.Line.Transparen
 $pSh = $slide.Shapes.AddShape(9, $initX - 6, $initY - 6, 12, 12)
 $pSh.Fill.Solid(); $pSh.Fill.ForeColor.RGB = 0xF8BD38; $pSh.Line.Visible = 0
 
-# Assign 4-Bezier Closed Orbit
-$eff = $slide.TimeLine.MainSequence.AddEffect($pSh, 1, 0, 2) # msoAnimEffectCustom
+# Assign 4-Bezier Closed Orbit (86 = msoAnimEffectPathCircle, 2 = WithPrevious)
+$eff = $slide.TimeLine.MainSequence.AddEffect($pSh, 86, 0, 2)
 $eff.Timing.Duration = $duration
 $eff.Timing.RepeatCount = 1000
 $eff.Timing.SmoothStart = 0; $eff.Timing.SmoothEnd = 0
-$eff.Behaviors.Add(1).MotionEffect.Path = $bezierPath
+$eff.Behaviors.Item(1).MotionEffect.Path = $bezierPath # Must end with " E"
 
-# Assign Depth Scaling
-$effScale = $slide.TimeLine.MainSequence.AddEffect($pSh, 1, 0, 2)
+# Assign Depth Scaling (54 = msoAnimEffectGrowShrink)
+$effScale = $slide.TimeLine.MainSequence.AddEffect($pSh, 54, 0, 2)
 $effScale.Timing.Duration = $duration / 2.0
 $effScale.Timing.RepeatCount = 1000
 $effScale.Timing.AutoReverse = -1
-$sBeh = $effScale.Behaviors.Add(3)
+$sBeh = $effScale.Behaviors.Add(3) # 3 = msoAnimTypeScale
 $sBeh.ScaleEffect.ByX = 125
 $sBeh.ScaleEffect.ByY = 125
 
