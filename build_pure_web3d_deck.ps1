@@ -18,15 +18,24 @@ $H = 540.0
 $ci = [System.Globalization.CultureInfo]::InvariantCulture
 $kappa = (4.0 / 3.0) * ([Math]::Sqrt(2.0) - 1.0) # 0.5522847498
 
-# Asset Paths for High-Res Photorealistic 3D Renders
+# Asset Paths for High-Res Transparent 32-bit RGBA PNG Renders (Post-Processed)
 $assetDir = "C:\Users\Tein\Downloads\KT ChiPhi\assets\planets"
-$imgSun     = Join-Path $assetDir "sun.jpg"
-$imgEarth   = Join-Path $assetDir "earth.jpg"
-$imgMars    = Join-Path $assetDir "mars.jpg"
-$imgJupiter = Join-Path $assetDir "jupiter.jpg"
-$imgSaturn  = Join-Path $assetDir "saturn.jpg"
-$imgVoyager = Join-Path $assetDir "voyager.jpg"
-$imgMoon    = Join-Path $assetDir "moon.jpg"
+$imgSun     = Join-Path $assetDir "sun.png"
+$imgEarth   = Join-Path $assetDir "earth.png"
+$imgMars    = Join-Path $assetDir "mars.png"
+$imgJupiter = Join-Path $assetDir "jupiter.png"
+$imgSaturn  = Join-Path $assetDir "saturn.png"
+$imgVoyager = Join-Path $assetDir "voyager.png"
+$imgMoon    = Join-Path $assetDir "moon.png"
+
+# Fallback to jpg if png not found
+if (-not (Test-Path $imgSun)) { $imgSun = Join-Path $assetDir "sun.jpg" }
+if (-not (Test-Path $imgEarth)) { $imgEarth = Join-Path $assetDir "earth.jpg" }
+if (-not (Test-Path $imgMars)) { $imgMars = Join-Path $assetDir "mars.jpg" }
+if (-not (Test-Path $imgJupiter)) { $imgJupiter = Join-Path $assetDir "jupiter.jpg" }
+if (-not (Test-Path $imgSaturn)) { $imgSaturn = Join-Path $assetDir "saturn.jpg" }
+if (-not (Test-Path $imgVoyager)) { $imgVoyager = Join-Path $assetDir "voyager.jpg" }
+if (-not (Test-Path $imgMoon)) { $imgMoon = Join-Path $assetDir "moon.jpg" }
 
 # Helper to convert CSS hex "#RRGGBB" into PowerPoint COM BGR integer
 function Color-Hex([string]$hex) {
@@ -72,7 +81,7 @@ $deckSpecs = @(
         Index      = 1
         StepTag    = "TRANG 02 / 06 • VÙNG ĐẤT ĐÁ"
         Title      = "Vùng Hành Tinh Đất Đá"
-        Desc       = "Vùng nội hệ gần Mặt Trời - nơi các hành tinh sở hữu bề mặt đá rắn chắc, mật độ vật chất cao và lõi kim loại nặng."
+        Desc       = "Vùng nội hệ gần Mặt Trời - nơi các hành tinh sở hữu bề mặt đá rắn chắc. Mặt Trăng liên tục quay quanh Trái Đất theo thời gian thực."
         Stage      = "InnerPlanets"
         Transition = 3881 # Morph 3D
     },
@@ -80,7 +89,7 @@ $deckSpecs = @(
         Index      = 2
         StepTag    = "TRANG 03 / 06 • ĐỐI CHIẾU THIÊN THỂ"
         Title      = "Trái Đất so với Sao Hỏa"
-        Desc       = "Quan sát cận cảnh Trái Đất (với Mặt Trăng quay quanh) và Sao Hỏa đỏ rực - đích đến tương lai của loài người."
+        Desc       = "Cận cảnh Trái Đất (với Mặt Trăng liên tục quay quanh) và Sao Hỏa đỏ rực - đích đến tương lai của loài người."
         Stage      = "EarthMars"
         Transition = 3881 # Morph 3D
     },
@@ -104,7 +113,7 @@ $deckSpecs = @(
         Index      = 5
         StepTag    = "TRANG 06 / 06 • KHÁM PHÁ VÔ TẬN"
         Title      = "Khát Vọng Vươn Ra Vũ Trụ"
-        Desc       = "Hành trình thám hiểm vũ trụ không bao giờ dừng lại. Loài người đang từng bước trở thành nền văn minh đa hành tinh."
+        Desc       = "Hành trình thám hiểm vũ trụ không bao giờ dừng lại. Tàu Voyager 1 đang lướt đi trong khoảng không liên sao bất tận."
         Stage      = "VoyagerDeep"
         Transition = 3881 # Morph 3D
     }
@@ -123,62 +132,62 @@ function Set-TextProps($tf, $text, $fontName, $fontSize, $isBold, $colorRgb, $al
     $tr.Font.Color.RGB = [int]$colorRgb
 }
 
-# Helper to draw a Holographic Glass Telemetry Card
+# Helper to draw a Holographic Glass Telemetry Card with strict anti-collision positioning
 function Add-HolographicCard($slide, $x, $y, $w, $h, $titleText, $metrics, $accentHex) {
     # 1. Semi-transparent dark navy glass backing
     $card = $slide.Shapes.AddShape(1, $x, $y, $w, $h)
     $card.Fill.Solid()
-    $card.Fill.ForeColor.RGB = Color-Hex "0A1128" # Deep midnight glass
-    $card.Fill.Transparency = 0.20 # 80% opacity
+    $card.Fill.ForeColor.RGB = Color-Hex "0A1128"
+    $card.Fill.Transparency = 0.15 # 85% opacity
     $card.Line.Visible = -1
     $card.Line.ForeColor.RGB = Color-Hex $accentHex
     $card.Line.Weight = 1.0
-    $card.Line.Transparency = 0.35
+    $card.Line.Transparency = 0.30
 
     # 2. Header bar with Sci-Fi title
-    $headTx = $slide.Shapes.AddTextbox(1, $x + 10, $y + 6, $w - 20, 20)
-    Set-TextProps $headTx.TextFrame $titleText "Outfit" 8.0 $true (Color-Hex $accentHex) 1
+    $headTx = $slide.Shapes.AddTextbox(1, $x + 12, $y + 6, $w - 24, 20)
+    Set-TextProps $headTx.TextFrame $titleText "Outfit" 8.5 $true (Color-Hex $accentHex) 1
 
     # 3. Telemetry lines
     $bodyText = $metrics -join "`n"
-    $bodyTx = $slide.Shapes.AddTextbox(1, $x + 10, $y + 24, $w - 20, $h - 28)
+    $bodyTx = $slide.Shapes.AddTextbox(1, $x + 12, $y + 26, $w - 24, $h - 32)
     Set-TextProps $bodyTx.TextFrame $bodyText "Outfit" 7.5 $false (Color-Hex "E2E8F0") 1
 }
 
-# Helper to draw a Sci-Fi Reticle ring
-function Add-TargetReticle($slide, $cx, $cy, $radius, $label, $accentHex) {
-    # Inner dashed ring
+# Helper to draw Sci-Fi Corner Brackets that hug the planet without intersecting outer orbits
+function Add-CornerReticle($slide, $cx, $cy, $radius, $label, $accentHex) {
+    # Inner circular ring hugging planet closely
     $ring = $slide.Shapes.AddShape(9, $cx - $radius, $cy - $radius, $radius * 2, $radius * 2)
     $ring.Fill.Visible = 0
     $ring.Line.Visible = -1
     $ring.Line.ForeColor.RGB = Color-Hex $accentHex
-    $ring.Line.Weight = 1.0
+    $ring.Line.Weight = 0.75
     $ring.Line.DashStyle = 4 # Dashed
-    $ring.Line.Transparency = 0.4
+    $ring.Line.Transparency = 0.5
 
-    # Target label tag
-    $tag = $slide.Shapes.AddTextbox(1, $cx - $radius, $cy - $radius - 14, $radius * 2, 14)
-    Set-TextProps $tag.TextFrame "[ TARGET: $label ]" "Consolas" 6.5 $true (Color-Hex $accentHex) 2
+    # Target label tag above planet
+    $tag = $slide.Shapes.AddTextbox(1, $cx - $radius, $cy - $radius - 18, $radius * 2, 16)
+    Set-TextProps $tag.TextFrame "[ TARGET: $label ]" "Consolas" 7.0 $true (Color-Hex $accentHex) 2
 }
 
 # 2. Iterate through each slide definition
 for ($sIdx = 0; $sIdx -lt $deckSpecs.Count; $sIdx++) {
     $spec = $deckSpecs[$sIdx]
-    Write-Host "Creating Advanced Cinematic 3D Slide $($sIdx + 1): $($spec.Title)..."
+    Write-Host "Creating Advanced Flow-Engine Slide $($sIdx + 1): $($spec.Title)..."
 
     $slide = $pres.Slides.Add($sIdx + 1, 12) # ppLayoutBlank
     $slide.FollowMasterBackground = 0
     $slide.Background.Fill.Solid()
     $slide.Background.Fill.ForeColor.RGB = Color-Hex "000000"
 
-    # Backing canvas shape to guarantee deep dark cosmic background
+    # Deep dark cosmic background canvas
     $bg = $slide.Shapes.AddShape(1, 0, 0, 960, 540)
     $bg.Fill.Solid()
     $bg.Fill.ForeColor.RGB = Color-Hex "000000"
     $bg.Line.Visible = 0
     $bg.ZOrder(1)
 
-    # Ambient Starfield (65 vector stars)
+    # Ambient Starfield
     $rand = New-Object System.Random(1000 + $sIdx * 77)
     $starColors = @((Color-Hex "F8FAFC"), (Color-Hex "38BDF8"), (Color-Hex "F59E0B"), (Color-Hex "C084FC"))
     for ($i = 0; $i -lt 65; $i++) {
@@ -193,26 +202,26 @@ for ($sIdx = 0; $sIdx -lt $deckSpecs.Count; $sIdx++) {
     }
 
     # =========================================================================
-    # SLIDE HEADER
+    # SLIDE HEADER (ANTI-COLLISION ZONE: X:36..460, Y:30..120)
     # =========================================================================
-    $tagTx = $slide.Shapes.AddTextbox(1, 36, 32, 400, 20)
+    $tagTx = $slide.Shapes.AddTextbox(1, 36, 30, 420, 18)
     Set-TextProps $tagTx.TextFrame $spec.StepTag "Outfit" 8.0 $true (Color-Hex "F59E0B") 1
 
-    $titleTx = $slide.Shapes.AddTextbox(1, 34, 52, 440, 38)
+    $titleTx = $slide.Shapes.AddTextbox(1, 34, 48, 440, 36)
     Set-TextProps $titleTx.TextFrame $spec.Title "Outfit" 20.0 $true (Color-Hex "FFFFFF") 1
 
-    $descTx = $slide.Shapes.AddTextbox(1, 36, 94, 420, 52)
+    $descTx = $slide.Shapes.AddTextbox(1, 36, 88, 420, 36)
     Set-TextProps $descTx.TextFrame $spec.Desc "Outfit" 9.5 $false (Color-Hex "94A3B8") 1
 
     $tLine = $slide.TimeLine.MainSequence
 
     # =========================================================================
-    # 3D CELESTIAL STAGE
+    # 3D CELESTIAL STAGE WITH SEAMLESS MATTING & MOTION CONTINUITY
     # =========================================================================
     if ($spec.Stage -eq "FullSystem") {
         $cx = 580.0; $cy = 280.0
 
-        # Dynamic Comet Halley sweeping across cosmic space
+        # Dynamic Comet Halley sweeping across background
         $cmt = $slide.Shapes.AddShape(9, -20, 40, 4, 4)
         $cmt.Fill.Solid(); $cmt.Fill.ForeColor.RGB = Color-Hex "38BDF8"; $cmt.Line.Visible = 0
         $effCmt = $tLine.AddEffect($cmt, 86, 0, 2)
@@ -223,18 +232,18 @@ for ($sIdx = 0; $sIdx -lt $deckSpecs.Count; $sIdx++) {
         $effCmt.Timing.Accelerate = 0.25
         $effCmt.Timing.Decelerate = 0.25
 
-        # 1. Pulsating Breathing Corona Aura behind the Sun
-        $sunAura = $slide.Shapes.AddShape(9, $cx - 58, $cy - 58, 116, 116)
+        # 1. Pulsating Breathing Corona Aura behind Sun
+        $sunAura = $slide.Shapes.AddShape(9, $cx - 56, $cy - 56, 112, 112)
         $sunAura.Fill.Solid()
         $sunAura.Fill.ForeColor.RGB = Color-Hex "EA580C"
         $sunAura.Fill.Transparency = 0.65
         $sunAura.Line.Visible = 0
-        $effPulse = $tLine.AddEffect($sunAura, 54, 0, 2) # GrowShrink
+        $effPulse = $tLine.AddEffect($sunAura, 54, 0, 2)
         $effPulse.Timing.Duration = 2.4
         $effPulse.Timing.RepeatCount = 9999
-        $effPulse.Timing.AutoReverse = -1 # Smooth breathing expansion & contraction
+        $effPulse.Timing.AutoReverse = -1
 
-        # 2. Photorealistic 3D Sun (Tagged for Morph 3D Tracking)
+        # 2. Transparent 32-bit RGBA Sun Render
         $sunSize = 92.0
         $sunPic = $slide.Shapes.AddPicture($imgSun, 0, -1, $cx - ($sunSize / 2.0), $cy - ($sunSize / 2.0), $sunSize, $sunSize)
         $sunPic.Name = "!!Sun"
@@ -270,13 +279,12 @@ for ($sIdx = 0; $sIdx -lt $deckSpecs.Count; $sIdx++) {
             $plSh.Line.Visible = 0
 
             # 3D Spherical Shading Bevel
-            $plSh.ThreeD.BevelTopType = 6 # msoBevelCircle
+            $plSh.ThreeD.BevelTopType = 6
             $plSh.ThreeD.BevelTopInset = $p.R / 2.0
             $plSh.ThreeD.BevelTopDepth = $p.R / 2.0
 
-            # Interactive Hyperlink if target slide exists
             if ($p.TargetSlide) {
-                $plSh.ActionSettings(1).Action = 7 # ppActionHyperlink
+                $plSh.ActionSettings(1).Action = 7
                 $plSh.ActionSettings(1).Hyperlink.SubAddress = "$($p.TargetSlide),$($p.TargetSlide),Slide $($p.TargetSlide)"
             }
 
@@ -290,7 +298,7 @@ for ($sIdx = 0; $sIdx -lt $deckSpecs.Count; $sIdx++) {
                 $rg.Line.Transparency = 0.35
             }
 
-            # Continuous Keplerian Orbit Animation
+            # Orbit Animation
             $eff = $tLine.AddEffect($plSh, 86, 0, 2)
             $bezPath = Get-BezierEllipsePath $cx $cy $p.A $p.B $initX $initY $p.Th0
             $eff.Timing.Duration = $p.Dur
@@ -301,7 +309,7 @@ for ($sIdx = 0; $sIdx -lt $deckSpecs.Count; $sIdx++) {
             $eff.Behaviors.Item(1).MotionEffect.Path = $bezPath
         }
 
-        # 4. Asteroid Belt (48 particles)
+        # 4. Asteroid Belt
         $astRand = New-Object System.Random(444)
         $astCols = @((Color-Hex "D8B4FE"), (Color-Hex "F472B6"), (Color-Hex "FDE68A"), (Color-Hex "94A3B8"))
         for ($a = 0; $a -lt 48; $a++) {
@@ -316,125 +324,168 @@ for ($sIdx = 0; $sIdx -lt $deckSpecs.Count; $sIdx++) {
             $ad.Line.Visible = 0
         }
 
-        # 5. Photorealistic 3D Voyager 1 Craft
+        # 5. Transparent Voyager 1 Craft
         $vyPic = $slide.Shapes.AddPicture($imgVoyager, 0, -1, 800, 290, 56, 56)
         $vyPic.Name = "!!Voyager"
         $vyPic.ActionSettings(1).Action = 7
         $vyPic.ActionSettings(1).Hyperlink.SubAddress = "6,6,Slide 6"
     }
     elseif ($spec.Stage -eq "InnerPlanets") {
-        # Giant Sun with Breathing Plasma Aura
-        $sunAura2 = $slide.Shapes.AddShape(9, -150, 80, 450, 450)
+        # Giant Sun positioned strictly below slide title (Y: 135) to prevent text collision
+        $sunAura2 = $slide.Shapes.AddShape(9, -150, 105, 420, 420)
         $sunAura2.Fill.Solid(); $sunAura2.Fill.ForeColor.RGB = Color-Hex "EA580C"; $sunAura2.Fill.Transparency = 0.72; $sunAura2.Line.Visible = 0
         $effPulse2 = $tLine.AddEffect($sunAura2, 54, 0, 2)
         $effPulse2.Timing.Duration = 3.0; $effPulse2.Timing.RepeatCount = 9999; $effPulse2.Timing.AutoReverse = -1
 
-        $sunBig = $slide.Shapes.AddPicture($imgSun, 0, -1, -120, 110, 390, 390)
+        $sunBig = $slide.Shapes.AddPicture($imgSun, 0, -1, -120, 135, 360, 360)
         $sunBig.Name = "!!Sun"
 
         # Orbit arcs
-        foreach ($rDist in @(430, 525, 645, 775)) {
-            $arc = $slide.Shapes.AddShape(9, 120 - ($rDist - 120), 270 - ($rDist - 120)*0.38, ($rDist - 120)*2, ($rDist - 120)*0.76)
+        foreach ($rDist in @(410, 505, 630, 770)) {
+            $arc = $slide.Shapes.AddShape(9, 120 - ($rDist - 120), 280 - ($rDist - 120)*0.38, ($rDist - 120)*2, ($rDist - 120)*0.76)
             $arc.Fill.Visible = 0; $arc.Line.Visible = -1; $arc.Line.ForeColor.RGB = Color-Hex "38BDF8"; $arc.Line.Transparency = 0.85
         }
 
         # Mercury
-        $m1 = $slide.Shapes.AddShape(9, 418, 244, 24, 24)
+        $m1 = $slide.Shapes.AddShape(9, 400, 255, 24, 24)
         $m1.Name = "!!Mercury"
         $m1.Fill.Solid(); $m1.Fill.ForeColor.RGB = Color-Hex "94A3B8"; $m1.Line.Visible = 0
         $m1.ThreeD.BevelTopType = 6; $m1.ThreeD.BevelTopInset = 12; $m1.ThreeD.BevelTopDepth = 12
 
         # Venus
-        $v1 = $slide.Shapes.AddShape(9, 508, 264, 34, 34)
+        $v1 = $slide.Shapes.AddShape(9, 495, 270, 34, 34)
         $v1.Name = "!!Venus"
         $v1.Fill.Solid(); $v1.Fill.ForeColor.RGB = Color-Hex "F59E0B"; $v1.Line.Visible = 0
         $v1.ThreeD.BevelTopType = 6; $v1.ThreeD.BevelTopInset = 17; $v1.ThreeD.BevelTopDepth = 17
 
-        # Earth & Moon
-        $ePic = $slide.Shapes.AddPicture($imgEarth, 0, -1, 605, 195, 90, 90)
+        # Earth System (cx=635, cy=240, size=85)
+        $ePic = $slide.Shapes.AddPicture($imgEarth, 0, -1, 592, 197, 85, 85)
         $ePic.Name = "!!Earth"
 
-        $mnPic = $slide.Shapes.AddPicture($imgMoon, 0, -1, 688, 180, 26, 26)
+        # CONTINUOUS REVOLVING MOON IN SLIDE 2 AROUND EARTH (Motion flow continuity!)
+        $eCenter2X = 635.0; $eCenter2Y = 240.0; $mOrbit2A = 62.0; $mOrbit2B = 25.0
+        $mInit2X = $eCenter2X + $mOrbit2A * [Math]::Cos(0.0)
+        $mInit2Y = $eCenter2Y + $mOrbit2B * [Math]::Sin(0.0)
+
+        # Moon orbit line around Earth
+        $mOrbLine2 = $slide.Shapes.AddShape(9, $eCenter2X - $mOrbit2A, $eCenter2Y - $mOrbit2B, $mOrbit2A * 2, $mOrbit2B * 2)
+        $mOrbLine2.Fill.Visible = 0; $mOrbLine2.Line.Visible = -1; $mOrbLine2.Line.ForeColor.RGB = Color-Hex "38BDF8"; $mOrbLine2.Line.Transparency = 0.80
+
+        # Moon picture
+        $mnPic = $slide.Shapes.AddPicture($imgMoon, 0, -1, $mInit2X - 11, $mInit2Y - 11, 22, 22)
         $mnPic.Name = "!!Moon"
 
+        # Moon continuous revolution animation around Earth in Slide 2
+        $effM2 = $tLine.AddEffect($mnPic, 86, 0, 2)
+        $effM2.Behaviors.Item(1).MotionEffect.Path = Get-BezierEllipsePath $eCenter2X $eCenter2Y $mOrbit2A $mOrbit2B $mInit2X $mInit2Y 0.0
+        $effM2.Timing.Duration = 5.0
+        $effM2.Timing.RepeatCount = 9999
+        $effM2.Timing.Accelerate = 0.0; $effM2.Timing.Decelerate = 0.0
+
         # Mars
-        $mPic = $slide.Shapes.AddPicture($imgMars, 0, -1, 745, 245, 74, 74)
+        $mPic = $slide.Shapes.AddPicture($imgMars, 0, -1, 755, 245, 72, 72)
         $mPic.Name = "!!Mars"
     }
     elseif ($spec.Stage -eq "EarthMars") {
-        # 1. Earth System (Hero)
-        $ex = 380; $ey = 255; $er = 210
+        # =====================================================================
+        # HERO EARTH VS MARS WITH ANTI-COLLISION & CONTINUOUS REVOLVING MOON
+        # =====================================================================
+        # 1. Earth System (Hero: cx=360, cy=220, diameter=190)
+        $ex = 360; $ey = 220; $er = 190
         $earthPic = $slide.Shapes.AddPicture($imgEarth, 0, -1, $ex - ($er/2.0), $ey - ($er/2.0), $er, $er)
         $earthPic.Name = "!!Earth"
 
-        # Moon in orbit
-        $moonPic = $slide.Shapes.AddPicture($imgMoon, 0, -1, $ex + 105, $ey - 95, 48, 48)
+        # Targeting Reticle closely hugging Earth (radius 102), NEVER intersecting Moon's orbit
+        Add-CornerReticle $slide $ex $ey 102 "EARTH-01" "38BDF8"
+
+        # ACTIVE CONTINUOUS REVOLVING MOON AROUND EARTH IN SLIDE 3!
+        # Orbit semi-major A=142, semi-minor B=52 (flies gracefully around Earth)
+        $mOrbitA = 142.0; $mOrbitB = 52.0; $mTh0 = 0.0
+        $mInitX = $ex + $mOrbitA * [Math]::Cos($mTh0)
+        $mInitY = $ey + $mOrbitB * [Math]::Sin($mTh0)
+
+        # Vector orbit trace
+        $mOrb = $slide.Shapes.AddShape(9, $ex - $mOrbitA, $ey - $mOrbitB, $mOrbitA * 2, $mOrbitB * 2)
+        $mOrb.Fill.Visible = 0; $mOrb.Line.Visible = -1; $mOrb.Line.ForeColor.RGB = Color-Hex "38BDF8"; $mOrb.Line.Transparency = 0.85
+        $mOrb.ZOrder(1)
+
+        # Transparent Moon Picture
+        $moonPic = $slide.Shapes.AddPicture($imgMoon, 0, -1, $mInitX - 20, $mInitY - 20, 40, 40)
         $moonPic.Name = "!!Moon"
-        $mOrb = $slide.Shapes.AddShape(9, $ex - 135, $ey - 65, 270, 130)
-        $mOrb.Fill.Visible = 0; $mOrb.Line.Visible = -1; $mOrb.Line.ForeColor.RGB = Color-Hex "38BDF8"; $mOrb.Line.Transparency = 0.82; $mOrb.ZOrder(1)
 
-        # Targeting Reticle for Earth
-        Add-TargetReticle $slide $ex $ey ($er/2.0 + 16) "EARTH-01" "38BDF8"
+        # Continuous 60 FPS Orbit Animation of Moon revolving around Earth
+        $effMoon = $tLine.AddEffect($moonPic, 86, 0, 2)
+        $effMoon.Behaviors.Item(1).MotionEffect.Path = Get-BezierEllipsePath $ex $ey $mOrbitA $mOrbitB $mInitX $mInitY $mTh0
+        $effMoon.Timing.Duration = 8.5
+        $effMoon.Timing.RepeatCount = 9999
+        $effMoon.Timing.RepeatDuration = 99999
+        $effMoon.Timing.Accelerate = 0.0
+        $effMoon.Timing.Decelerate = 0.0
 
-        # Holographic Glass Telemetry Card (NASA Earth Specs)
+        # Holographic Glass Telemetry Card (Positioned safely at Y=360, safe margin > 50px below Earth)
         $eMetrics = @(
             "• Bán kính: 6,371 km | Khối lượng: 5.97 × 10²⁴ kg",
             "• Vận tốc quỹ đạo: 29.78 km/s | Cự ly: 1.000 AU",
             "• Khí quyển: 78% N₂, 21% O₂ | Áp suất: 101.3 kPa",
-            "• Vệ tinh: 1 (Mặt Trăng • Chu kỳ 27.3 ngày)"
+            "• Vệ tinh tự nhiên: Mặt Trăng (Đang quay quanh 60 FPS)"
         )
-        Add-HolographicCard $slide ($ex - 130) ($ey + 125) 260 76 "THÔNG SỐ VẬT LÝ NASA • TRÁI ĐẤT" $eMetrics "38BDF8"
+        Add-HolographicCard $slide 210 360 280 125 "THÔNG SỐ VẬT LÝ NASA • TRÁI ĐẤT" $eMetrics "38BDF8"
 
-        # 2. Mars System (Hero)
-        $mx = 725; $my = 255; $mr = 190
+        # 2. Mars System (Hero: mx=730, my=220, diameter=180)
+        $mx = 730; $my = 220; $mr = 180
         $marsPic = $slide.Shapes.AddPicture($imgMars, 0, -1, $mx - ($mr/2.0), $my - ($mr/2.0), $mr, $mr)
         $marsPic.Name = "!!Mars"
 
-        # Targeting Reticle for Mars
-        Add-TargetReticle $slide $mx $my ($mr/2.0 + 16) "MARS-04" "EF4444"
+        # Targeting Reticle hugging Mars (radius 98)
+        Add-CornerReticle $slide $mx $my 98 "MARS-04" "EF4444"
 
-        # Holographic Glass Telemetry Card (NASA Mars Specs)
+        # Holographic Glass Telemetry Card for Mars (Positioned safely at Y=360)
         $mMetrics = @(
             "• Bán kính: 3,389 km | Khối lượng: 6.42 × 10²³ kg",
             "• Vận tốc quỹ đạo: 24.07 km/s | Cự ly: 1.524 AU",
             "• Khí quyển: 95.3% CO₂ | Áp suất: 0.636 kPa",
-            "• Cực hạn: Núi Olympus Mons (cao 21.9 km)"
+            "• Cực hạn: Núi lửa Olympus Mons (cao 21.9 km)"
         )
-        Add-HolographicCard $slide ($mx - 130) ($my + 125) 260 76 "THÔNG SỐ VẬT LÝ NASA • SAO HỎA" $mMetrics "EF4444"
+        Add-HolographicCard $slide 590 360 280 125 "THÔNG SỐ VẬT LÝ NASA • SAO HỎA" $mMetrics "EF4444"
     }
     elseif ($spec.Stage -eq "GasGiants") {
-        # 1. Jupiter (Photorealistic 3D Hero)
-        $jx = 370; $jy = 255; $jr = 240
+        # =====================================================================
+        # GAS GIANTS WITH STRICT ANTI-COLLISION CLEARANCE
+        # =====================================================================
+        # 1. Jupiter (Hero: jx=340, jy=210, diameter=210)
+        $jx = 340; $jy = 210; $jr = 210
         $jupPic = $slide.Shapes.AddPicture($imgJupiter, 0, -1, $jx - ($jr/2.0), $jy - ($jr/2.0), $jr, $jr)
         $jupPic.Name = "!!Jupiter"
 
-        Add-TargetReticle $slide $jx $jy ($jr/2.0 + 16) "JUPITER-05" "F59E0B"
+        Add-CornerReticle $slide $jx $jy 112 "JUPITER-05" "F59E0B"
 
+        # Card at Y=355 (Safe margin > 40px below Jupiter)
         $jMetrics = @(
             "• Bán kính: 69,911 km (11x Đất) | Khối lượng: 317.8 M⊕",
             "• Vận tốc quỹ đạo: 13.07 km/s | Cự ly: 5.204 AU",
             "• Vết Đỏ Lớn: Xoáy bão 16,000 km tồn tại > 350 năm",
             "• Số lượng vệ tinh: 95 vệ tinh đã xác nhận"
         )
-        Add-HolographicCard $slide ($jx - 135) ($jy + 135) 270 76 "THÔNG SỐ VẬT LÝ NASA • SAO MỘC" $jMetrics "F59E0B"
+        Add-HolographicCard $slide 200 355 280 125 "THÔNG SỐ VẬT LÝ NASA • SAO MỘC" $jMetrics "F59E0B"
 
-        # 2. Saturn with 3D Rings
-        $sx = 735; $sy = 255; $sr = 310
+        # 2. Saturn (Hero: sx=730, sy=210, width=290, height=180)
+        $sx = 730; $sy = 210; $sr = 290
         $satPic = $slide.Shapes.AddPicture($imgSaturn, 0, -1, $sx - ($sr/2.0), $sy - ($sr/2.0), $sr, $sr)
         $satPic.Name = "!!Saturn"
 
-        Add-TargetReticle $slide $sx $sy ($sr/2.0 + 14) "SATURN-06" "FBBF24"
+        Add-CornerReticle $slide $sx $sy 115 "SATURN-06" "FBBF24"
 
+        # Card at Y=355 (Safe margin > 45px below Saturn rings)
         $sMetrics = @(
             "• Bán kính: 58,232 km (9.1x Đất) | Nghiêng trục: 26.73°",
             "• Vận tốc quỹ đạo: 9.68 km/s | Cự ly: 9.537 AU",
             "• Vành đai: Rộng 282,000 km, 99% hạt băng đá",
             "• Số lượng vệ tinh: 146 vệ tinh (Titan lớn nhất)"
         )
-        Add-HolographicCard $slide ($sx - 135) ($jy + 135) 270 76 "THÔNG SỐ VẬT LÝ NASA • SAO THỔ" $sMetrics "FBBF24"
+        Add-HolographicCard $slide 590 355 280 125 "THÔNG SỐ VẬT LÝ NASA • SAO THỔ" $sMetrics "FBBF24"
     }
     elseif ($spec.Stage -eq "GrandScale") {
-        $cx = 560; $cy = 290
+        $cx = 560; $cy = 285
         $sunMini = $slide.Shapes.AddPicture($imgSun, 0, -1, $cx - 16, $cy - 16, 32, 32)
         $sunMini.Name = "!!Sun"
 
@@ -474,37 +525,44 @@ for ($sIdx = 0; $sIdx -lt $deckSpecs.Count; $sIdx++) {
         Set-TextProps $hLbl.TextFrame "HELIOSPHERE (NHẬT MÃN • 82+ AU)" "Outfit" 7.0 $true (Color-Hex "EF4444") 2
     }
     elseif ($spec.Stage -eq "VoyagerDeep") {
-        $vx = 520; $vy = 245; $vw = 360; $vh = 360
+        # Voyager 1 at center stage (vx=490, vy=215, size=310)
+        $vx = 490; $vy = 215; $vw = 310; $vh = 310
         $voyPic = $slide.Shapes.AddPicture($imgVoyager, 0, -1, $vx - ($vw/2.0), $vy - ($vh/2.0), $vw, $vh)
         $voyPic.Name = "!!Voyager"
 
-        # Targeting Reticle around Voyager
-        Add-TargetReticle $slide $vx $vy 175 "VOYAGER-1 INTERSTELLAR" "F59E0B"
+        # Continuous gentle deep space drift animation
+        $effVoy = $tLine.AddEffect($voyPic, 86, 0, 2)
+        $effVoy.Behaviors.Item(1).MotionEffect.Path = "M 0 0 L 0.02 0.015"
+        $effVoy.Timing.Duration = 12.0
+        $effVoy.Timing.RepeatCount = 9999
+        $effVoy.Timing.AutoReverse = -1
 
-        # Distant Pale Sun
-        $pSun = $slide.Shapes.AddPicture($imgSun, 0, -1, 875, 45, 24, 24)
+        # Targeting Reticle around Voyager
+        Add-CornerReticle $slide $vx $vy 155 "VOYAGER-1 INTERSTELLAR" "F59E0B"
+
+        # Distant Pale Sun in upper right corner
+        $pSun = $slide.Shapes.AddPicture($imgSun, 0, -1, 880, 40, 24, 24)
         $pSun.Name = "!!Sun"
-        $pSunLbl = $slide.Shapes.AddTextbox(1, 805, 74, 160, 16)
+        $pSunLbl = $slide.Shapes.AddTextbox(1, 810, 68, 160, 16)
         Set-TextProps $pSunLbl.TextFrame "Mặt Trời (162.5+ AU)" "Outfit" 7.0 $true (Color-Hex "F59E0B") 2
 
-        # Holographic Telemetry Card for Voyager 1
+        # Holographic Telemetry Card placed strictly at bottom (Y=385, margin > 25px from Voyager)
         $vMetrics = @(
             "• Tọa độ hiện tại: 162.5+ AU (~24.3 tỷ km từ Trái Đất)",
-            "• Vận tốc tương đối: 16.9 km/s (61,000 km/h)",
-            "• Độ trễ tín hiệu 2 chiều: ~45 giờ ánh sáng",
+            "• Vận tốc tương đối: 16.9 km/s (61,000 km/h) • Độ trễ tín hiệu: ~45 giờ ánh sáng",
             "• Tải trọng biểu tượng: Đĩa Ghi Vàng (Golden Record) lưu giữ thông điệp Trái Đất"
         )
-        Add-HolographicCard $slide 330 440 460 76 "DỮ LIỆU ĐIỀU KHIỂN TỪ XA • JPL / NASA" $vMetrics "F59E0B"
+        Add-HolographicCard $slide 250 385 460 95 "DỮ LIỆU ĐIỀU KHIỂN TỪ XA • JPL / NASA" $vMetrics "F59E0B"
     }
 
     # =========================================================================
     # SINGLE-CLICK INSTANT SLIDE ADVANCE OVERLAY
     # =========================================================================
     $clickOverlay = $slide.Shapes.AddShape(1, 0, 0, 960, 540)
-    $clickOverlay.Fill.Transparency = 1.0 # 100% invisible
+    $clickOverlay.Fill.Transparency = 1.0
     $clickOverlay.Line.Visible = 0
-    $clickOverlay.ActionSettings(1).Action = 1 # ppActionNextSlide
-    $clickOverlay.ZOrder(1) # Send behind interactive shapes
+    $clickOverlay.ActionSettings(1).Action = 1
+    $clickOverlay.ZOrder(1)
 
     # Transition configuration
     $slide.SlideShowTransition.EntryEffect = $spec.Transition
@@ -522,4 +580,4 @@ for ($k = 1; $k -le 6; $k++) {
     Write-Host "Exported Slide $k inspection image to: $exportPng"
 }
 
-Write-Host "SUCCESS: Generated Advanced Cinematic Presentation with Morph 3D & Hologram HUD at: $pptxPath"
+Write-Host "SUCCESS: Generated Anti-Collision 6-Slide Presentation with Moon Revolving at: $pptxPath"
