@@ -93,6 +93,18 @@ $sun.Fill.ForeColor.RGB = 0x0B9EF5       # Bright Gold/Orange (#F59E0B)
 $sun.Fill.BackColor.RGB = 0x24BFFB       # Corona Yellow (#FBBF24)
 ```
 
+### E. Interactive Modals & Drawers (`.planet-drawer` / `.modal`)
+In Web CSS/JS, clicking a 3D object slides out an inspection drawer (`transform: translateX(0)`).
+In PowerPoint, translate this into dedicated close-up slides:
+- Left hero area: Close-up 3D vector celestial sphere with orbiting satellite/moon.
+- Right hero area: Glassmorphic Drawer box (`$drwBg`) with 6-stat metadata grid and atmospheric composition specs.
+- Animate entry with native FlyIn from Right:
+```powershell
+$eff = $slide.TimeLine.MainSequence.AddEffect($drwBg, 2, 0, 2) # 2 = FlyIn, 2 = WithPrevious
+$eff.EffectParameters.Direction = 3 # 3 = From Right
+$eff.Timing.Duration = 0.45
+```
+
 ---
 
 ## 2. JavaScript Kinematics & Physics Engine
