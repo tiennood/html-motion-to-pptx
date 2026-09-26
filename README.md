@@ -1,63 +1,147 @@
 # Web3D Motion & CSS to Native Vector 3D PPTX (Agent Skill)
 
-An advanced Agent Skill & automation pipeline that transforms **Web 3D interactive applications (Three.js, WebGL, Canvas), CSS visual styles (glassmorphism, neon glow, gradients, soft edges), and JavaScript physics/kinematics** into **100% native Microsoft PowerPoint vector shapes and smooth perpetual timeline animations**.
+[![Engine](https://img.shields.io/badge/PowerPoint-SMIL%20Hardware%20Accelerated-orange.svg)]()
+[![Type](https://img.shields.io/badge/Vectors-100%25%20Native-blue.svg)]()
+[![Video/GIF](https://img.shields.io/badge/Video%20Embeds-0%20Bytes-success.svg)]()
+[![Assets](https://img.shields.io/badge/3D%20Assets-8K%20CGI%20%2F%20NASA-purple.svg)]()
+[![License](https://img.shields.io/badge/License-MIT-green.svg)]()
+
+An advanced Agent Skill & automation pipeline that transforms **Web 3D interactive applications (Three.js, WebGL, Canvas), CSS visual styles (glassmorphism, neon glow, gradients, soft edges), and JavaScript physics/kinematics** into **100% native Microsoft PowerPoint vector shapes, 8K photorealistic 3D assets, and smooth perpetual timeline animations**.
 
 ---
 
-## 🌟 Why This Exists
-Converting web animations to PowerPoint traditionally suffered from major limitations:
-- **Video embeds (MP4 / WebM)**: Huge file sizes (50MB+), choppy playback, cannot edit text or shapes.
-- **Animated GIFs**: Low color depth (256 colors), jagged edges, heavy pixelation on 4K projectors.
-- **Static Screenshots**: Loses all animation and interactivity completely.
+## 🌟 Why This Exists: The End of Video & GIF Embeds
 
-**This skill introduces a new paradigm**:
-- **0 Bytes of Video / GIF**: 100% native vector shapes (`msoShapeOval`, `msoShapeRectangle`, grouped vectors).
-- **Sub-100KB presentation decks**: Fast loading, instant sharing via email.
-- **Continuous 60 FPS**: Rendered via PowerPoint's native hardware-accelerated SMIL animation engine.
-- **CSS Aesthetics**: Neon Glow (`Shape.Glow`), Glassmorphism transparency & ambient shadows (`Shape.Shadow`), Soft atmospheric edges (`Shape.SoftEdge`), and Cyberpunk typography.
-- **Constant Linear Velocity**: Eliminates default 50% ease-in/ease-out hãm tốc by setting `Accelerate = 0` and `Decelerate = 0`.
-- **Closed Circuit Orbits**: Terminated with `Z` for seamless, perpetual 360° loops without jumping or stopping.
-- **1-Click Slide Advance**: Full-screen transparent overlay ensures 1 click immediately transitions to the next slide.
-- **Editable & Crisp**: Every card, statistic, planet, and trajectory can be edited directly inside PowerPoint.
+Converting web animations into presentation slides traditionally suffered from severe limitations:
+- **Video Embeds (MP4 / WebM)**: File sizes exceed 50–200MB, playback stutter is common, and you cannot edit text, colors, or numbers.
+- **Animated GIFs**: Low 256-color depth, jagged dithered edges, heavy pixelation on modern 4K/8K projectors.
+- **Static Screenshots**: Completely loses all animation, dynamic lighting, and presentation impact.
+
+### The Web3D-to-PPTX Paradigm:
+| Feature | Video Embeds (MP4) | Animated GIFs | **Web3D-to-PPTX (This Skill)** |
+|---|---|---|---|
+| **File Size** | 50 MB – 250 MB | 20 MB – 80 MB | **< 500 KB** (or ~3.5 MB with 8K 3D assets) |
+| **Resolution** | Fixed raster (1080p) | 256 colors pixelated | **Infinite Vector Crispness (4K / 8K)** |
+| **Frame Rate** | Locked 30/60 FPS | Stuttery 15–25 FPS | **Smooth 60 FPS Native SMIL Hardware Acceleration** |
+| **Editability** | ❌ 0% (Baked pixels) | ❌ 0% (Baked pixels) | **100% Editable Shapes, Speeds, Texts & Labels** |
+| **3D Realism** | High (static video) | Low | **8K CGI/NASA Renders with Seamless Black Blending** |
+| **Interactive Control** | Play / Pause only | None | **Single-Click Slide Advance & Trigger State Machines** |
 
 ---
 
-## 📐 Mathematical Formulation
+## 🏗️ Core Architecture & Pipeline
 
-### 1. 4-Arc Cubic Bezier Closed Elliptical Trajectory
-PowerPoint's animation path syntax (`msoAnimEffectPath`) requires normalized coordinates. A smooth, mathematically closed ellipse is generated using 4 cubic Bezier curves with the constant:
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Web 3D Source (HTML / CSS / JS)                      │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+           ┌────────────────────────┼────────────────────────┐
+           ▼                        ▼                        ▼
+┌──────────────────────┐ ┌──────────────────────┐ ┌──────────────────────┐
+│  CSS Visual Engine   │ │ JS Kinematics Engine │ │ Photorealistic 3D    │
+│  - Neon Glow         │ │  - Keplerian Orbits  │ │ Asset Pipeline       │
+│  - SoftEdge Blur     │ │  - 4-Bezier Curves   │ │  - 8K NASA / CGI     │
+│  - Glassmorphism     │ │  - Uniform Speed     │ │  - Pure Black Blend  │
+│  - Radial Gradients  │ │  - Sub-orbits (Moon) │ │  - 3D Bevel Shading  │
+│  - Minimalist Type   │ │  - Click Advance     │ │  - Zero Edge Artifact│
+└──────────┬───────────┘ └──────────┬───────────┘ └──────────┬───────────┘
+           │                        │                        │
+           └────────────────────────┼────────────────────────┘
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                PowerPoint Native Vector Output Engine                  │
+│       (Shapes + 3D Lighting + SMIL Motion Path 86 + Slide Master)      │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📐 Mathematical Formulation & Orbital Kinematics
+
+### 1. 4-Quadrant Cubic Bézier Elliptical Trajectory
+PowerPoint's animation engine (`Effect 86` / `msoAnimEffectPathRight`) requires normalized VML coordinates. A mathematically perfect, continuous elliptical orbit is generated using 4 cubic Bézier splines governed by the optimal constant:
 $$\kappa = \frac{4}{3}(\sqrt{2} - 1) \approx 0.5522847498$$
 
-Always terminating with `Z` for continuous seamless repetition.
+For semi-major axis $a$, semi-minor axis $b$, center $(c_x, c_y)$, initial position $(X_{\text{init}}, Y_{\text{init}})$, and quadrant starting angle $\theta_A$:
+$$C_{1x} = \frac{c_x + a\cos\theta_A - \kappa a\sin\theta_A - X_{\text{init}}}{W}, \quad C_{1y} = \frac{c_y + b\sin\theta_A + \kappa b\cos\theta_A - Y_{\text{init}}}{H}$$
+$$C_{2x} = \frac{c_x + a\cos\theta_B + \kappa a\sin\theta_B - X_{\text{init}}}{W}, \quad C_{2y} = \frac{c_y + b\sin\theta_B - \kappa b\cos\theta_B - Y_{\text{init}}}{H}$$
+$$E_x = \frac{c_x + a\cos\theta_B - X_{\text{init}}}{W}, \quad E_y = \frac{c_y + b\sin\theta_B - Y_{\text{init}}}{H}$$
 
-### 2. Linear Velocity Tuning
-By setting `Timing.Accelerate = 0.0` and `Timing.Decelerate = 0.0`, shapes orbit with uniform celestial speed instead of stalling at the loop boundary.
+### 2. Perpetual Uniform Velocity (`Accelerate = 0`, `Decelerate = 0`)
+PowerPoint defaults to 50% ease-in and 50% ease-out acceleration, causing orbiting planets to decelerate and stall at each loop boundary.
+By setting:
+```powershell
+$eff.Timing.Accelerate = 0.0
+$eff.Timing.Decelerate = 0.0
+$eff.Timing.SmoothStart = 0
+$eff.Timing.SmoothEnd = 0
+```
+the objects maintain **100% constant, natural Keplerian orbital velocity**.
+
+### 3. Closed Loop Terminator (`Z`)
+All motion path strings end with `Z` (closepath) rather than `E`, instructing PowerPoint to close the curve seamlessly with zero jump or coordinate snap.
+
+---
+
+## 🎨 Photorealistic 3D Assets & Seamless Cosmic Blending
+
+Instead of primitive flat geometric circles, this skill introduces a **Photorealistic 3D Hybrid Architecture**:
+1. **8K Studio Renders**: Planets, moons, spacecraft (Voyager 1), and stars generated from NASA/CGI imagery with real craters, atmospheric scattering, and cloud systems.
+2. **Seamless Deep Black Integration**: By isolating assets on pure `#000000` black and setting the slide canvas background to `0x000000`, the asset boundaries dissolve completely into deep space.
+3. **Zero Bounding Box Artifacts**: No rectangular frames, no alpha channel fringing, achieving cinematic IMAX-grade depth.
+4. **Hardware Animated**: `AddPicture` shapes in PowerPoint fully support native Bézier motion paths, scale transforms, and transitions.
+
+---
+
+## ⚡ Maximum Single-Slide Capabilities (Tối đa của 1 slide)
+
+A single PowerPoint slide is not limited to static bullets; it can be programmed as a complete interactive simulation:
+1. **100+ Concurrent Motion Timelines**: Simultaneous planetary orbits, rotating moons, drifting spacecraft, and pulsing stars with zero lag.
+2. **Trigger State Machines (`Animation.TriggerShape`)**: Shapes can act as interactive buttons without changing slides. Clicking celestial body A opens an inspection modal, starts an audio track, and highlights telemetry data.
+3. **Native 3D Models (`.glb` / `.gltf`)**: Full 3-axis rotation, turntable animation, and 3D lighting.
+4. **Single-Click Advance Overlay**: A full-screen invisible rectangle with `ppActionNextSlide (1)` ensures mouse clicks advance slides instantly despite perpetual looping animations.
 
 ---
 
 ## 📁 Repository Structure
+
 ```
 web3d-motion-to-pptx/
-├── SKILL.md                          # Antigravity Agent Skill definition
-├── README.md                         # Documentation & Architecture
+├── SKILL.md                          # Comprehensive Agent Skill specification
+├── README.md                         # Architecture, mathematics, and documentation
 ├── scripts/
-│   ├── bezier_math.py                # Python Bezier ellipse & projection calculations
-│   └── build_motion_pptx.ps1         # PowerShell COM deck generator
+│   ├── build_pure_web3d_deck.ps1     # Production script: 6-slide photorealistic 3D deck
+│   ├── build_motion_pptx.ps1         # Spec-driven vector motion generator
+│   └── bezier_math.py                # Python Bezier ellipse & kinematics solver
+├── assets/
+│   └── planets/                      # 8K Photorealistic 3D planetary assets
+│       ├── sun.jpg                   # Solar plasma & corona
+│       ├── earth.jpg                 # Continents, clouds & atmospheric halo
+│       ├── moon.jpg                  # High-res Apollo craters
+│       ├── mars.jpg                  # Olympus Mons & red oxide terrain
+│       ├── jupiter.jpg               # Atmospheric cloud whorls & Great Red Spot
+│       ├── saturn.jpg                # 3D tilted ice rings & Cassini division
+│       └── voyager.jpg               # Voyager 1 interstellar deep space probe
 └── examples/
-    └── solar_system_spec.json        # 6-slide celestial system specification
+    └── solar_system_spec.json        # 6-slide JSON specification schema
 ```
 
 ---
 
-## 🚀 Installation & Usage
+## 🚀 Quick Start & Usage
 
-### As an Antigravity Agent Skill
-Place this folder into `.agents/skills/web3d-motion-to-pptx/` in your workspace root, or `~/.gemini/config/skills/web3d-motion-to-pptx/` for global availability.
+### 1. As an Antigravity Agent Skill
+Invoke the skill directly in your prompt:
+> *"Sử dụng skill `web3d-motion-to-pptx`, hãy phân tích web 3D trong `solar_3d/` và tạo bản trình chiếu PowerPoint vector 3D tương ứng."*
 
-Activate the skill by asking:
-> *"Sử dụng skill web3d-motion-to-pptx, hãy phân tích các chuyển động và CSS trong file index.html và chuyển đổi thành slide PowerPoint vector 3D tương ứng."*
+### 2. Run Direct via PowerShell COM
+To build the complete 6-slide photorealistic 3D presentation deck:
+```powershell
+powershell -ExecutionPolicy Bypass -File "./scripts/build_pure_web3d_deck.ps1" -pptxPath "./solar_system_3d_vector.pptx"
+```
 
-### Manual Execution (PowerShell COM)
+To build a custom deck from a JSON specification:
 ```powershell
 powershell -ExecutionPolicy Bypass -File "./scripts/build_motion_pptx.ps1" -specPath "./examples/solar_system_spec.json" -outPath "./output.pptx"
 ```

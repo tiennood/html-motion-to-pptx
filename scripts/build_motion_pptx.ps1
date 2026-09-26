@@ -44,7 +44,7 @@ function Get-BezierEllipsePath($cx, $cy, $a, $b, $initX, $initY, $theta0) {
 
         $quarters += [string]::Format($ci, "C {0:F5} {1:F5} {2:F5} {3:F5} {4:F5} {5:F5}", $c1x, $c1y, $c2x, $c2y, $endX, $endY)
     }
-    return "M 0 0 " + ($quarters -join " ") + " E"
+    return "M 0 0 " + ($quarters -join " ") + " Z"
 }
 
 Write-Host "Building presentation from $specPath..."
@@ -142,23 +142,23 @@ foreach ($sData in $spec.slides) {
         $pSh = $slide.Shapes.AddShape(9, $initX - ($diam / 2), $initY - ($diam / 2), $diam, $diam)
         $pSh.Fill.Solid(); $pSh.Fill.ForeColor.RGB = $color; $pSh.Line.Visible = 0
 
-        # Animation Path (86 = msoAnimEffectPathCircle, 2 = WithPrevious)
+        # Animation Path (86 = msoAnimEffectPathRight, 2 = WithPrevious)
         $path = Get-BezierEllipsePath $cx $cy $a $b $initX $initY $th0
         $eff = $slide.TimeLine.MainSequence.AddEffect($pSh, 86, 0, 2)
         $eff.Timing.Duration = $dur
-        $eff.Timing.RepeatCount = 1000
+        $eff.Timing.RepeatCount = 9999
+        $eff.Timing.RepeatDuration = 99999
         $eff.Timing.SmoothStart = 0; $eff.Timing.SmoothEnd = 0
+        $eff.Timing.Accelerate = 0.0; $eff.Timing.Decelerate = 0.0
+        $eff.Timing.BounceEnd = 0; $eff.Timing.RewindAtEnd = 0
         $eff.Behaviors.Item(1).MotionEffect.Path = $path
-
-        # Depth Scaling (54 = msoAnimEffectGrowShrink)
-        $effS = $slide.TimeLine.MainSequence.AddEffect($pSh, 54, 0, 2)
-        $effS.Timing.Duration = $dur / 2.0
-        $effS.Timing.RepeatCount = 1000
-        $effS.Timing.AutoReverse = -1
-        $sBeh = $effS.Behaviors.Add(3)
-        $sBeh.ScaleEffect.ByX = 125
-        $sBeh.ScaleEffect.ByY = 125
     }
+
+    # Full-screen single-click advance overlay
+    $overlay = $slide.Shapes.AddShape(1, 0, 0, $W, $H)
+    $overlay.Fill.Solid(); $overlay.Fill.Transparency = 1.0; $overlay.Line.Visible = 0
+    $overlay.ActionSettings.Item(1).Action = 1 # ppActionNextSlide
+    $slide.SlideShowTransition.AdvanceOnClick = -1
 }
 
 $finalOut = (Resolve-Path .).Path + "\" + $outPath
