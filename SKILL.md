@@ -147,17 +147,24 @@ M 0 0 C c1x c1y c2x c2y Ex Ey ... C ... 0.00000 0.00000 Z
 5. **Calibrate Harmonic Orbital Periods:**
    - Calibrate periods so that all bodies complete multiple 360° revolutions during typical slide presentation time (e.g. 1.8s to 8.2s).
 
-### C. Single-Click Advance Architecture
-In PowerPoint, active repeating animations intercept mouse clicks. To ensure users can advance slides with a single click anywhere without pausing the animation:
+### D. Color System: Web Hex (#RRGGBB) to PowerPoint COM (BGR)
+Windows PowerPoint COM `.Color.RGB` expects an integer encoded in little-endian **BGR** (`(Blue << 16) | (Green << 8) | Red`). Directly writing `0x38BDF8` swaps Red and Blue (turning cyan into orange). Always use the exact translation helper:
 ```powershell
-# Full-Screen Transparent Overlay on the TOP layer
-$overlay = $slide.Shapes.AddShape(1, 0, 0, 960, 540) # msoShapeRectangle
-$overlay.Name = "ClickAdvanceOverlay"
-$overlay.Fill.Solid()
-$overlay.Fill.Transparency = 1.0                     # 100% invisible
-$overlay.Line.Visible = 0
-$overlay.ActionSettings.Item(1).Action = 1           # 1 = ppActionNextSlide
+function Color-Hex([string]$hex) {
+    $hex = $hex.TrimStart('#')
+    $r = [Convert]::ToInt32($hex.Substring(0, 2), 16)
+    $g = [Convert]::ToInt32($hex.Substring(2, 2), 16)
+    $b = [Convert]::ToInt32($hex.Substring(4, 2), 16)
+    return [int]($r + ($g * 256) + ($b * 65536))
+}
 ```
+
+### E. Pure 3D Viewport Translation (Omitting Parameter Clutter)
+When converting a rich 3D Web experience into PowerPoint, avoid cluttering the slides with heavy spec tables or multi-card data grids unless specifically requested. A 100% authentic Web 3D look features:
+1. **Top Bar HUD**: Clean system title badge + Quick control button pills (`⏸`, `⚡ 1x`, `🏷 Nhãn`, `🔄 360°`).
+2. **Telemetry Radar HUD (Top-Right)**: Live radar scope with range rings, rotating sweep cone, celestial blips, and target telemetry.
+3. **Bottom Bar HUD**: Multi-dot step indicator pill, interaction hints, and Previous/Next buttons.
+4. **Hero 3D Scene**: Dominates the viewport with glowing stars, orbits, planetary spheres, and floating 3D labels directly anchored to each celestial body.
 
 ---
 
